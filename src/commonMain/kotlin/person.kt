@@ -1,3 +1,4 @@
+import com.soywiz.korma.random.randomWithWeights
 import kotlin.random.Random
 
 class Disease(val name: String, val probability: Double, val affects: Affects, val fatal: Boolean, val instant: Boolean) {
@@ -6,10 +7,12 @@ class Disease(val name: String, val probability: Double, val affects: Affects, v
         OXEN
     }
 
-    val affectsList: Map<Affects, MutableList<Disease>> = mapOf(Affects.PERSON to mutableListOf(), Affects.OXEN to mutableListOf())
-
     init {
         affectsList[affects]?.add(this)
+    }
+
+    companion object {
+        val affectsList: Map<Affects, MutableList<Disease>> = mapOf(Affects.PERSON to mutableListOf(), Affects.OXEN to mutableListOf())
     }
 }
 
@@ -32,51 +35,45 @@ enum class DiseaseList(val disease: Disease) {
 }
 
 class Oxen(val name: String, var health: Int = 10, var alive: Boolean = true) {
-    fun update(data: MutableMap<String, Any>) : MutableMap<String, Any> {
+    fun update() {
         if (Random.nextInt(0, 5) == 1) {
-            val diseaseNew = choices(
-                Disease.affectsList[Disease.Affects.OXEN], [
-                    d.probability
-                for d in Disease.affectsList[Disease.Affects.OXEN]
-            ], k = 1)[0]
+            val diseaseNew = Disease.affectsList[Disease.Affects.OXEN]!!.randomWithWeights(Disease.affectsList[Disease.Affects.OXEN]!!.map { it.probability })
 
-            if (diseaseNew.name.upper() == "STOLEN") {
+            if (diseaseNew.name.uppercase() == "STOLEN") {
                 alive = false
-            } else if (diseaseNew . name . upper () == "INJURED") {
+            } else if (diseaseNew.name.uppercase() == "INJURED") {
                 health -= 4
             }
-            if (diseaseNew.name.upper() != "HEALTHY") {
-                data["alerts"].add("An ox has been " + diseaseNew.name + "!")
+            if (diseaseNew.name.uppercase() != "HEALTHY") {
+                GameState.alerts.add("An ox has been " + diseaseNew.name + "!")
             }
         }
 
         if (health < 1) {
             alive = false
-            data["alerts"].add("One of your oxen has died.")
+            GameState.alerts.add("One of your oxen has died.")
         }
-
-        return data
     }
 }
 
-class Person(val name: String, var health: Int = 10, val isMainPerson: Boolean = false, val diseases: MutableList<Disease>, var alive: Boolean = true, val occupation: String) {
-    fun update(data: MutableMap<String, Any>) : MutableMap<String, Any> {
+class Person(val name: String, var health: Int = 10, val isMainPerson: Boolean = false, val diseases: MutableMap<Disease, Int>, var alive: Boolean = true, val occupation: Int) {
+    fun update() {
         val food_rations: Map<Int, Int> = mapOf(0 to 3, 1 to 2, 2 to 1)
 
-        if ((data["wagon"].inventory["food"] - food_rations[data["rations"]]) < 0) {
+        if ((GameState.wagon.inventory.food - food_rations[GameState.rations]!!) < 0) {
             health -= 1
         } else {
-            data["wagon"].inventory["food"] -= food_rations[data["rations"]]
+            GameState.wagon.inventory.food -= food_rations[GameState.rations] ?: 0
             if (health < 10) {
                 health += 2
             }
         }
 
-        diseases.toList().forEach { disease ->
-            diseases[disease] -= 1
-            if (diseases[disease] < 1) {
-                data["alerts"].add(name + " is cured of " + disease.name + "!")
-                diseases.pop(disease)
+        diseases.toMap().keys.forEach { disease ->
+            diseases[disease] = diseases[disease]!! - 1
+            if (diseases[disease]!! < 1) {
+                GameState.alerts.add(name + " is cured of " + disease.name + "!")
+                diseases.remove(disease)
             } else if (disease.fatal) {
                 health -= 2
             }
@@ -86,23 +83,17 @@ class Person(val name: String, var health: Int = 10, val isMainPerson: Boolean =
         }
 
         if (Random.nextInt(0, 11) == 1) {
-            val diseaseNew = choices(
-                Disease.affectsList[Disease.Affects.PERSON], [
-                    d.probability
-                for d in Disease.affectsList[Disease.Affects.PERSON]
-            ], k = 1)[0]
+            val diseaseNew = Disease.affectsList[Disease.Affects.PERSON]!!.randomWithWeights(Disease.affectsList[Disease.Affects.PERSON]!!.map { it.probability })
 
-            if (diseaseNew.name.upper() != DiseaseList.HEALTHY.name) {
-                data["alerts"].add(name + " has " + diseaseNew.name + "!")
+            if (diseaseNew.name.uppercase() != DiseaseList.HEALTHY.name) {
+                GameState.alerts.add(name + " has " + diseaseNew.name + "!")
                 diseases[diseaseNew] = 3
             }
         }
 
         if (health < 1) {
             alive = false
-            data["alerts"].add("$name is dead.")
+            GameState.alerts.add("$name is dead.")
         }
-
-        return data
     }
 }

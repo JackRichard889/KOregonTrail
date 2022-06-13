@@ -1,3 +1,4 @@
+import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.file.std.resourcesVfs
 
 public class Landmarks {
@@ -6,11 +7,6 @@ public class Landmarks {
         FORT,
         TEXTURED
     }
-
-    val textures = mapOf(
-        Types.RIVER to util.imgscale(resourcesVfs["location/river.png"], 2),
-        Types.FORT to util.imgscale(resourcesVfs["location/fort.png"], 2)
-    )
 
     enum class Landmarks {
         INDEPENDENCE,
@@ -62,68 +58,64 @@ public class Landmarks {
         Landmarks.THE_DALLES to resourcesVfs["landmarks/the_dalles.png"],
         Landmarks.KANSAS_RIVER to resourcesVfs["landmarks/kansas_river.png"]
     )
+
+    companion object {
+        val textures = mapOf(
+            Types.RIVER to resourcesVfs["location/river.png"],
+            Types.FORT to resourcesVfs["location/fort.png"]
+        )
+    }
 }
 
-data class Environment(val texture, val name, val length, val temp)
+data class Environment(val texture: VfsFile, val name: String, val length: Int, val temp: Double)
 
 public class EnvironmentRegistry {
-    val environments = listOf<Environment>()
-    val landmarks = mapOf<Landmarks.Landmarks, Double>()
-    val landmarkTypes = mapOf<>()
-    val customTex = mapOf<>()
+    val environments = mutableListOf<Environment>()
+    val landmarks = mutableMapOf<Landmarks.Landmarks, Int>()
+    val landmarkTypes = mutableMapOf<Landmarks.Landmarks, Landmarks.Types>()
+    val customTex = mutableMapOf<Landmarks.Landmarks, VfsFile>()
 
-    fun add_environment(environment) {
-        self.__environments.append(environment)
-        return len(self.__environments) - 1
+    fun add_environment(environment: Environment) : Int {
+        environments.add(environment)
+        return environments.size - 1
     }
 
-    fun add_landmark(landmark, location, typeLandmark, customTexture = "") {
-        self.__landmarks[landmark] = location
-        self.__landmark_types[landmark] = typeLandmark
-        if customTexture != "":
-        self.__custom_tex[landmark] = resourcesVfs[customTexture)
-
-        def get_environment (self, index):
-        return self.__environments[index]
+    fun add_landmark(landmark: Landmarks.Landmarks, location: Int, typeLandmark: Landmarks.Types, customTexture: String = "") {
+        landmarks[landmark] = location
+        landmarkTypes[landmark] = typeLandmark
+        if (customTexture != "") {
+            customTex[landmark] = resourcesVfs[customTexture]
+        }
     }
 
-    fun arriving(milesTraveled) {
-        for landmark in self.__landmarks:
-        if (self.__landmarks[landmark] * 100) -(milesTraveled * 4) < 100 and (self.__landmarks[landmark] * 100) - (milesTraveled * 4) > 0:
-        return landmark
-        return None
+    fun get_environment(index: Int) = environments[index]
+
+    fun arriving(milesTraveled: Int) : Landmarks.Landmarks? {
+        landmarks.keys.forEach {
+            if ((landmarks[it]?.times(100))!! - (milesTraveled * 4) in 1..99) {
+                return@arriving it
+            }
+        }
+        return null
     }
 
-    fun get_array() {
-        return self.__environments
+    fun get_array() = environments
+
+    fun get_landmarks() = landmarks
+
+    fun get_type(landmark: Landmarks.Landmarks) = landmarkTypes[landmark]
+
+    fun get_texture(landmark: Landmarks.Landmarks) = customTex[landmark]
+
+    fun get_type_texture(type_landmark: Landmarks.Types): VfsFile {
+        return Landmarks.textures[type_landmark]!!
     }
 
-    fun get_landmarks() {
-        return self.__landmarks
-    }
-
-    fun get_type(landmark) {
-        return self.__landmark_types[landmark]
-    }
-
-    fun get_texture(landmark) {
-        return self.__custom_tex[landmark]
-    }
-
-    fun get_type_texture(self, type_landmark) {
-        return Landmarks.textures[type_landmark]
-    }
-
-    fun get_length() {
-        length = 0
-        for env in self.__environments:
-        length += env.length * 100
-        return length
-    }
+    fun get_length() = environments.sumOf { it.length * 100 }
 }
 
 class Ground {
-    fun render(environments, registry) {
+    /*fun render(environments, registry) {
         landmarks = registry.get_landmarks()
         length = 0
         for env in environments:
@@ -143,5 +135,5 @@ class Ground {
         else:
         screen.blit(registry.get_type_texture(registry.get_type(landmark)), (landmarks[landmark] * 100, 0))
         return pygame.transform.flip(screen, True, False)
-    }
+    }*/
 }
