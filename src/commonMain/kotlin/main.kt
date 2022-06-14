@@ -13,6 +13,8 @@ import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.ISizeInt
 import screens.LearnScene
+import screens.NameSelectorScene
+import screens.SelectorScene
 
 suspend fun main() = Korge(Korge.Config(windowSize = ISizeInt.invoke(500, 500), virtualSize = ISizeInt.invoke(500, 500), bgcolor = Colors["#000000"], title = "Oregon Trail 2020 Remastered Ultimate Edition", module = GameModule))
 
@@ -32,7 +34,7 @@ class MainScene : Scene() {
 
 		addUpdater {
 			when {
-				//views.input.keys[Key.NUMPAD1] -> sceneContainer.changeTo()
+				views.input.keys[Key.NUMPAD1] -> launchImmediately { sceneContainer.pushTo<SelectorScene>() }
 				views.input.keys[Key.NUMPAD2] -> launchImmediately { sceneContainer.pushTo<LearnScene>() }
 				views.input.keys[Key.NUMPAD3] -> views.gameWindow.close(0)
 			}
@@ -48,5 +50,7 @@ object GameModule : Module() {
 	override suspend fun AsyncInjector.configure() {
 		mapPrototype { MainScene() }
 		mapPrototype { LearnScene() }
+		mapPrototype { SelectorScene() }
+		mapPrototype { NameSelectorScene() }
 	}
 }

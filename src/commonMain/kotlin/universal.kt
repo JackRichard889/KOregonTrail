@@ -35,4 +35,6 @@ object GameState {
     var traveled: Double = 0.0
     val alerts: MutableList<String> = mutableListOf()
     val wagon: Wagon = Wagon()
+
+    val extras: MutableMap<String, Any> = mutableMapOf()
 }
