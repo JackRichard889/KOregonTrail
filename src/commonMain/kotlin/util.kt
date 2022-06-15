@@ -12,7 +12,7 @@ fun money_for_profession(occupation: Int) : Double {
 }
 
 fun getPressedKeys(input: InputKeys) : String {
-    return when {
+    val letter = when {
         input.justPressed(Key.A) -> "a"
         input.justPressed(Key.B) -> "b"
         input.justPressed(Key.C) -> "c"
@@ -39,6 +39,9 @@ fun getPressedKeys(input: InputKeys) : String {
         input.justPressed(Key.X) -> "x"
         input.justPressed(Key.Y) -> "y"
         input.justPressed(Key.Z) -> "z"
+        input.justPressed(Key.SPACE) -> " "
         else -> ""
     }
+
+    return if (input.pressing(Key.LEFT_SHIFT) || input.pressing(Key.RIGHT_SHIFT)) letter.uppercase() else letter
 }

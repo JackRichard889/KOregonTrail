@@ -8,6 +8,7 @@ import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.font.TtfFont
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
+import getPressedKeys
 
 class NameSelectorScene : Scene() {
     var currentInx = 0
@@ -45,7 +46,7 @@ class NameSelectorScene : Scene() {
             scale = 1.5
         }
 
-        val elements = (0..if (currentInx != 0) 4 else 0).map {
+        var elements = (0..if (currentInx != 0) 4 else 0).map {
             text(if (it == 0) "What is the first name of\nthe wagon leader? " + names[it].ifEmpty { "_" } else "#${it + 1}: " + names[it].ifEmpty { "_" },
                 font = font,
                 textSize = 18.0,
@@ -55,25 +56,35 @@ class NameSelectorScene : Scene() {
             }
         }
 
-        if (currentInx == 5) {
-            text("Are these names correct? ", font = font, textSize = 18.0, color = Colors.WHITE) {
-                x = 25.0
-                y = 475.0
-            }
-        }
-
         addUpdater {
-            if (views.input.keys.justPressed(Key.RETURN)) {
-                if (currentInx < 4) {
+            if (views.input.keys.justPressed(Key.ENTER) || views.input.keys.justPressed(Key.RETURN)) {
+                if (currentInx < 5) {
                     if (names[currentInx].isBlank()) {
-                        names[currentInx] = allNames.random()
+                        names[currentInx] = allNames.random().uppercase()
                     }
-                    currentInx++
+                }
+
+                if (++currentInx == 1) {
+                    elements = elements + (1..4).map {
+                        text("#${it + 1}: " + names[it].ifEmpty { "_" },
+                            font = font,
+                            textSize = 18.0,
+                            color = Colors.WHITE) {
+                            x = 25.0
+                            y = if (currentInx == 0) 240.0 else 300.0 + (it * 30)
+                        }
+                    }
                 }
             }
 
             if (currentInx != 5) {
-                names[currentInx] = names[currentInx] + getPressedKeys(views.input)
+                names[currentInx] = names[currentInx] + getPressedKeys(views.input.keys)
+                if (views.input.keys.justPressed(Key.BACKSPACE) && names[currentInx].isNotEmpty()) { names[currentInx] = names[currentInx].dropLast(1) }
+            } else {
+                text("Are these names correct? _", font = font, textSize = 18.0, color = Colors.WHITE) {
+                    x = 25.0
+                    y = 475.0
+                }
             }
 
             elements.forEachIndexed { index, text ->
