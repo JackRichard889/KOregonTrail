@@ -56,7 +56,7 @@ class Oxen(val name: String, var health: Int = 10, var alive: Boolean = true) {
     }
 }
 
-class Person(val name: String, var health: Int = 10, val isMainPerson: Boolean = false, val diseases: MutableMap<Disease, Int>, var alive: Boolean = true, var occupation: Int) {
+class Person(val name: String, var health: Int = 10, val isMainPerson: Boolean = false, val diseases: MutableMap<Disease, Int> = mutableMapOf(), var alive: Boolean = true, var occupation: Int = 0) {
     fun update() {
         val food_rations: Map<Int, Int> = mapOf(0 to 3, 1 to 2, 2 to 1)
 

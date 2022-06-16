@@ -18,7 +18,7 @@ import screens.SelectorScene
 
 suspend fun main() = Korge(Korge.Config(windowSize = ISizeInt.invoke(500, 500), virtualSize = ISizeInt.invoke(500, 500), bgcolor = Colors["#000000"], title = "Oregon Trail 2020 Remastered Ultimate Edition", module = GameModule))
 
-class MainScene : Scene() {
+class MainScene(gameState: GameState) : Scene() {
 	override suspend fun Container.sceneInit() {
 		val font = TtfFont(resourcesVfs["font.ttf"].readAll())
 
@@ -48,9 +48,10 @@ object GameModule : Module() {
 	override val mainScene = MainScene::class
 
 	override suspend fun AsyncInjector.configure() {
-		mapPrototype { MainScene() }
-		mapPrototype { LearnScene() }
-		mapPrototype { SelectorScene() }
-		mapPrototype { NameSelectorScene() }
+		mapInstance(GameState)
+		mapPrototype { MainScene(GameState) }
+		mapPrototype { LearnScene(GameState) }
+		mapPrototype { SelectorScene(GameState) }
+		mapPrototype { NameSelectorScene(GameState) }
 	}
 }

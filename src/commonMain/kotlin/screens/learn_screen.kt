@@ -1,5 +1,6 @@
 package screens
 
+import GameState
 import com.soywiz.korev.Key
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.Container
@@ -11,7 +12,7 @@ import com.soywiz.korim.font.TtfFont
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.resourcesVfs
 
-class LearnScene : Scene() {
+class LearnScene(gameState: GameState) : Scene() {
     var page: Int = 0
 
     override suspend fun Container.sceneInit() {

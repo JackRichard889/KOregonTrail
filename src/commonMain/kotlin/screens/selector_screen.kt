@@ -12,7 +12,7 @@ import com.soywiz.korim.font.TtfFont
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.resourcesVfs
 
-class SelectorScene : Scene() {
+class SelectorScene(val gameState: GameState) : Scene() {
     override suspend fun Container.sceneInit() {
         val font = TtfFont(resourcesVfs["font.ttf"].readAll())
 
@@ -28,13 +28,13 @@ class SelectorScene : Scene() {
 
         addUpdater {
             if (views.input.keys.justPressed(Key.NUMPAD1)) {
-                //GameState.extras["occupation"] = 1
+                gameState.extras["occupation"] = 1
                 launchImmediately { sceneContainer.pushTo<NameSelectorScene>() }
             } else if (views.input.keys.justPressed(Key.NUMPAD2)) {
-                //GameState.extras["occupation"] = 2
+                gameState.extras["occupation"] = 2
                 launchImmediately { sceneContainer.pushTo<NameSelectorScene>() }
             } else if (views.input.keys.justPressed(Key.NUMPAD3)) {
-                //GameState.extras["occupation"] = 3
+                gameState.extras["occupation"] = 3
                 launchImmediately { sceneContainer.pushTo<NameSelectorScene>() }
             }
         }

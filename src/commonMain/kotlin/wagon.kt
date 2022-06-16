@@ -1,7 +1,7 @@
-public class Wagon(val party: List<Person> = listOf()) {
+public class Wagon(var party: List<Person> = listOf()) {
     class Inventory(party: List<Person>) {
         var food = 0
-        var cash = money_for_profession(party.first { it.isMainPerson }.occupation)
+        var cash = money_for_profession(party.firstOrNull() { it.isMainPerson }?.occupation ?: 0)
         var clothing = 0
         var ammunition = 0
         var axel = 0
