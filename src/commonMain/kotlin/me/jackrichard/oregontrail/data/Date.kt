@@ -1,8 +1,10 @@
+package me.jackrichard.oregontrail.data
+
 import com.soywiz.klock.days
 import com.soywiz.klock.plus
 import kotlin.random.Random
 
-public class Date(val month: Int, val day: Int) {
+class Date(val month: Int, val day: Int) {
     enum class Season {
         WINTER,
         SUMMER,

@@ -1,6 +1,6 @@
-package screens
+package me.jackrichard.oregontrail.scenes
 
-import GameState
+import me.jackrichard.oregontrail.data.GameState
 import com.soywiz.korev.Key
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.Container

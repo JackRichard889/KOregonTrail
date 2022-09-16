@@ -1,6 +1,6 @@
-package screens
+package me.jackrichard.oregontrail.scenes
 
-import GameState
+import me.jackrichard.oregontrail.data.GameState
 import Person
 import com.soywiz.klock.milliseconds
 import com.soywiz.korev.Key
@@ -14,7 +14,7 @@ import com.soywiz.korim.font.TtfFont
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.resourcesVfs
-import getPressedKeys
+import me.jackrichard.oregontrail.util.getPressedKeys
 
 class NameSelectorScene(val gameState: GameState) : Scene() {
     var currentInx = 0

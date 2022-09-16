@@ -1,15 +1,7 @@
+package me.jackrichard.oregontrail.util
+
 import com.soywiz.korev.Key
 import com.soywiz.korge.input.InputKeys
-import com.soywiz.korio.file.std.resourcesVfs
-
-fun money_for_profession(occupation: Int) : Double {
-    return when (occupation) {
-        0 -> 1600.00
-        1 -> 800.00
-        2 -> 400.00
-        else -> 0.0
-    }
-}
 
 fun getPressedKeys(input: InputKeys) : String {
     val letter = when {
