@@ -1,31 +1,18 @@
 package me.jackrichard.oregontrail.data
 
+import com.soywiz.klock.DateTime
 import com.soywiz.klock.days
-import com.soywiz.klock.plus
 import kotlin.random.Random
 
-class Date(val month: Int, val day: Int) {
-    enum class Season {
-        WINTER,
-        SUMMER,
-        SPRING,
-        FALL
-    }
+class Date private constructor(private var date: DateTime = DateTime(1848, Random.nextInt(1, 12), Random.nextInt(1, 25))) {
+    constructor(month: Int, day: Int) : this(DateTime(1848, month, day))
 
-    enum class Weather {
-        NONE,
-        SNOW,
-        RAIN,
-        FOG,
-        HOT
-    }
+    enum class Season { WINTER, SUMMER, SPRING, FALL }
+    enum class Weather { NONE, SNOW, RAIN, FOG, HOT }
 
-    val weather: MutableMap<String, Weather> = mutableMapOf()
-    var date = com.soywiz.klock.Date(1848, if (month < 1) Random.nextInt(1, 12) else month, if (day < 1) Random.nextInt(1, 25) else day)
+    private val weatherHistory: MutableMap<DateTime, Weather> = mutableMapOf()
 
-    fun get_date() = date
-
-    fun get_formatted_date(): String {
+    override fun toString(): String {
         val months = mapOf(
             1 to "January", 2 to "February", 3 to "March", 4 to "April",
             5 to "May", 6 to "June", 7 to "July", 8 to "August",
@@ -34,22 +21,20 @@ class Date(val month: Int, val day: Int) {
         return months[date.month.index1] + date.format(" %d, %Y")
     }
 
-    fun get_season(): Season {
-        val seasonForMonth = mapOf(
+    val season: Season
+        get() = mapOf(
             1 to Season.WINTER, 2 to Season.WINTER, 3 to Season.WINTER, 4 to Season.SPRING,
             5 to Season.SPRING, 6 to Season.SPRING, 7 to Season.SUMMER, 8 to Season.SUMMER,
             9 to Season.FALL, 10 to Season.FALL, 11 to Season.FALL, 12 to Season.WINTER
-        )
-        return seasonForMonth[date.month.index1]!!
-    }
+        )[date.month.index1]!!
 
-    fun get_formatted_season(season: Season): String {
-        val seasons = mapOf(
-            Season.WINTER to "Winter", Date.Season.FALL to "Fall",
-            Season.SPRING to "Spring", Date.Season.SUMMER to "Summer"
-        )
+    fun getWeather(environment: Environment): Weather {
+        if (weatherHistory.containsKey(date)) { return weatherHistory[date]!! }
+        else if (environment != null) {
 
-        return seasons[season]!!
+        } else {
+
+        }
     }
 
     fun get_weather(environment: Environment? = null) : Weather {
@@ -92,16 +77,5 @@ class Date(val month: Int, val day: Int) {
         }
     }
 
-    fun get_formatted_weather(weather: Weather) : String {
-        val weathers = mapOf(
-            Weather.NONE to "clear", Weather.RAIN to "rain",
-            Weather.SNOW to "snow", Weather.FOG to "fog", Weather.HOT to "hot"
-        )
-
-        return weathers[weather]!!
-    }
-
-    fun advance() = advance_days(1)
-
-    fun advance_days(days: Int) { date += 1.days }
+    fun advance(days: Int = 1) { date += 1.days }
 }

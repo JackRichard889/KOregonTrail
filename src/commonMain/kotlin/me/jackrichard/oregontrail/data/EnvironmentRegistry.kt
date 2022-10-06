@@ -9,12 +9,12 @@ class EnvironmentRegistry {
     val landmarkTypes = mutableMapOf<Landmarks.Landmarks, Landmarks.Types>()
     val customTex = mutableMapOf<Landmarks.Landmarks, VfsFile>()
 
-    fun add_environment(environment: Environment) : Int {
+    fun addEnvironment(environment: Environment) : Int {
         environments.add(environment)
         return environments.size - 1
     }
 
-    fun add_landmark(landmark: Landmarks.Landmarks, location: Int, typeLandmark: Landmarks.Types, customTexture: String = "") {
+    fun addLandmark(landmark: Landmarks.Landmarks, location: Int, typeLandmark: Landmarks.Types, customTexture: String = "") {
         landmarks[landmark] = location
         landmarkTypes[landmark] = typeLandmark
         if (customTexture != "") {
@@ -33,10 +33,6 @@ class EnvironmentRegistry {
         return null
     }
 
-    fun get_array() = environments
-
-    fun get_landmarks() = landmarks
-
     fun get_type(landmark: Landmarks.Landmarks) = landmarkTypes[landmark]
 
     fun get_texture(landmark: Landmarks.Landmarks) = customTex[landmark]
@@ -45,5 +41,5 @@ class EnvironmentRegistry {
         return Landmarks.textures[type_landmark]!!
     }
 
-    fun get_length() = environments.sumOf { it.length * 100 }
+    fun length() = environments.sumOf { it.length * 100 }
 }

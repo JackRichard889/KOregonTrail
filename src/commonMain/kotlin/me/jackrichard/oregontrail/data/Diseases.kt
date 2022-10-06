@@ -2,7 +2,7 @@ package me.jackrichard.oregontrail.data
 
 import kotlin.reflect.KClass
 
-enum class Diseases(val identifier: String, val probability: Double, val affects: KClass<out Entity>, val fatal: Boolean = false, val instant: Boolean = false) {
+enum class Diseases(private val identifier: String, val probability: Double, val affects: KClass<out Entity>, val fatal: Boolean = false, val instant: Boolean = false) {
     CHOLERA("Cholera", 0.1, Person::class, fatal = true),
     DIPHTHERIA("Diphtheria", 0.1, Person::class, fatal = true),
     DYSENTERY("Dysentery", 0.2, Person::class, fatal = true),
